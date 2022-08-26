@@ -74,3 +74,5 @@ Final Config will look like this.
 Open http://localhost:8080 in your favorite browser.
 
 Now you will be taken to okta for login.
+
+If you face some trouble, raise and issue on this repo.
