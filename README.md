@@ -1,17 +1,20 @@
 # Camunda Okta OIDC SSO 
 The example to implement okta sso in Camunda for Oauth2.0 flow.
 
+I have implemented Single logout as well in this. If you don't need then
+modify the WebAppSecurityConfig .
+
 Prerequisites
 * Java 17 (Shall work on Java 11 onwards, I have not tested though)
 * Okta Developer Account
 * Git
 
-1. If you don not have free developer account on Okta then you can create one.
+1. If you do not have free developer account on Okta then you can create one.
 [Okta Developer Account](https://developer.okta.com/)
 
 2. Register a group called "camunda-admin" and assign a user to it.
 
-Directory : Groups : Add group
+   Directory : Groups : Add group
 
 3. Assign some people to group ( make sure you add few people via Directory : People)
 
@@ -54,13 +57,13 @@ Final Config will look like this.
 
 8. Modify the application.yml and update following
 
-   issuer: https://<your-dev-tenant>.okta.com/oauth2/default
+   issuer: https://your-dev-tenant.okta.com/oauth2/default
 
    client-id: <your okta client id here>
 
    client-secret: <your okta client secret here>
 
-   orgUrl: https://<your-dev-tenant>.okta.com
+   orgUrl: https://your-dev-tenant.okta.com
 
 9. Run the Project will following commands
 
