@@ -18,6 +18,7 @@
         <db.h2.version>2.1.214</db.h2.version>
         <okta.sdk.version>2.1.6</okta.sdk.version>
         <camunda.version>7.17.0</camunda.version>
+        <version.graal.js>21.1.0</version.graal.js>
     </properties>
 
     <dependencyManagement>
@@ -99,6 +100,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jdbc</artifactId>
         </dependency>
+<!--Java 15 onwards default JS engine has been removed from JVM, we need to add Graal js engine -->
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js</artifactId>
+            <version>${version.graal.js}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.graalvm.js</groupId>
+            <artifactId>js-scriptengine</artifactId>
+            <version>${version.graal.js}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
