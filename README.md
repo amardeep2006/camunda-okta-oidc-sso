@@ -1,2 +1,1 @@
-# camunda-okta-oidc-sso
-Implement Okta Single Sign On in Camunda Webapps
+The example to implement okta sso in Camunda for Oauth2.0 flow.
