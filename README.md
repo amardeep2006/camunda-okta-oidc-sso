@@ -59,13 +59,13 @@ Final Config will look like this.
 
    issuer: https://your-dev-tenant.okta.com/oauth2/default
 
-   client-id: <your okta client id here>
+   client-id: your okta client id here
 
-   client-secret: <your okta client secret here>
+   client-secret: your okta client secret here
 
    orgUrl: https://your-dev-tenant.okta.com
 
-9. Run the Project will following commands
+9. Run the Project with following commands
 
 `./mvnw clean package`
 
