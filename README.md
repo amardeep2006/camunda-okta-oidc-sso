@@ -12,7 +12,7 @@ Prerequisites
 1. If you do not have free developer account on Okta then you can create one.
 [Okta Developer Account](https://developer.okta.com/)
 
-2. Register a group called "camunda-admin" and assign a user to it.
+2. Login to your okta account and Register a group called "camunda-admin" and assign a user to it.
 
    Directory : Groups : Add group
 
