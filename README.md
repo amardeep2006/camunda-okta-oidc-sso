@@ -15,12 +15,12 @@ Directory : Groups : Add group
 
 3. Assign some people to group ( make sure you add few people via Directory : People)
 
-![img_9.png](img_9.png)
+![img_9.png](img/img_9.png)
 
 5. Login to Okta and register your app by clicking on Applications : Create App Integration
-![img.png](img.png)
+![img.png](img/img.png)
 6. Select OIDC and Application type as Web
-![img_2.png](img_2.png)
+![img_2.png](img/img_2.png)
 7. Provide App Details
 
    App integration name (Whatever you like) : camunda-sso-oidc-demo
@@ -33,23 +33,23 @@ Directory : Groups : Add group
 
    Your app will look like this , Note down the Client ID and Client Secret
 
-![img_4.png](img_4.png)
+![img_4.png](img/img_4.png)
 
 5. Creating Groups Claim 
 
 Go to Security : Authorization Server : default 
 
-![img_5.png](img_5.png)
+![img_5.png](img/img_5.png)
  
 Go To Claims Tab and create 2 claims with name "**camunda-groups**"  one for ID and one for access
 
-![img_7.png](img_7.png)
+![img_7.png](img/img_7.png)
 
-![img_8.png](img_8.png)
+![img_8.png](img/img_8.png)
 
 Final Config will look like this.
 
-![img_6.png](img_6.png)
+![img_6.png](img/img_6.png)
 
 
 8. Modify the application.yml and update following
