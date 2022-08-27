@@ -5,6 +5,7 @@ import org.camunda.bpm.webapp.impl.security.auth.ContainerBasedAuthenticationFil
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,8 @@ public class WebAppSecurityConfig {
         return successHandler;
     }
 
+    @Value("${sso.enable.singlelogout}")
+    private boolean singleLogout;
     private final Logger logger = LoggerFactory.getLogger(WebAppSecurityConfig.class.getName());
 
     @Bean
@@ -48,11 +51,12 @@ public class WebAppSecurityConfig {
                 .anyRequest()
                 .permitAll()
                 .and()
-// .logout () Added for Single Logout , If you do not want Single Logout then Remove logout part
-                .logout().logoutSuccessHandler(oidcLogoutSuccessHandler())
-                .and()
                 .oauth2Login();
 
+        if (singleLogout) {
+            http
+                    .logout().logoutSuccessHandler(oidcLogoutSuccessHandler());
+        }
 
         return http.build();
     }

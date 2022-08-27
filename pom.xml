@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.example.workflow</groupId>
-    <artifactId>my-project</artifactId>
+    <artifactId>camunda-okta-oidc-sso</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
         <!--Camunda certified 7.17.0 with spring 2.6.x only , not tested with 2.7.x-->
         <spring.boot.version>2.6.11</spring.boot.version>
         <!-- Bumped up h2 db due to vulnerabilities in 1.4.200  -->

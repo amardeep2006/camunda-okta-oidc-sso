@@ -19,3 +19,7 @@ okta:
     #  Make sure to change the below as per your okta tenant
     orgUrl: https://<your-dev-tenant>.okta.com
     postLogoutRedirectUri: http://localhost:8080/
+# The value of this flag activates single logout (clears okta session as well.)
+sso:
+  enable:
+    singlelogout: false
