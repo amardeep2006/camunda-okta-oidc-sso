@@ -17,7 +17,7 @@
         <!-- Bumped up h2 db due to vulnerabilities in 1.4.200  -->
         <db.h2.version>2.1.214</db.h2.version>
         <okta.sdk.version>2.1.7</okta.sdk.version>
-        <camunda.version>7.19.0</camunda.version>
+        <camunda.version>7.18.0</camunda.version>
         <version.graal.js>21.1.0</version.graal.js>
         <version.postgresql>42.3.3</version.postgresql>
     </properties>
