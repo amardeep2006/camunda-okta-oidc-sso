@@ -5,8 +5,11 @@ camunda.bpm:
     enabled: true
   # If you don't create it then Camunda will ask you to create one on First login
   admin-user:
-    id: demo
-    password: demo
+    id: amar.deep.singh@xyz.com
+#    password: demo
+  generic-properties:
+    properties:
+      generalResourceWhitelistPattern: ".+"
 okta:
   oauth2:
     #  Make sure to change the below as per your okta tenant
