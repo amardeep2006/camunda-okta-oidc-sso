@@ -1,5 +1,3 @@
-# NOTE : The sso does not work with Camunda 7.19 . I am working on fix and will publish very soon. Also updating this to Camunda 7.20.
-
 # Camunda Okta OIDC SSO 
 The example to implement okta sso in Camunda for Oauth2.0 flow.
 
