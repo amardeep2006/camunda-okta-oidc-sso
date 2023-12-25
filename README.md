@@ -80,6 +80,6 @@ Now you will be taken to okta for login.
 
 If you face some trouble, raise and issue on this repo.
 
-# Futire plans - January 2024 
+# Future plans - January 2024 
 
 I am working on securing REST API via client credentials flow and JWT based on okta . Will update soon.
