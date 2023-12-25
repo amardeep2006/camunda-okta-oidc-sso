@@ -12,14 +12,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <!--Camunda certified 7.17.0 with spring 2.6.x only , not tested with 2.7.x-->
-        <spring.boot.version>2.7.14</spring.boot.version>
-        <!-- Bumped up h2 db due to vulnerabilities in 1.4.200  -->
-        <db.h2.version>2.1.214</db.h2.version>
-        <okta.sdk.version>2.1.7</okta.sdk.version>
-        <camunda.version>7.19.0</camunda.version>
+        <!--Camunda certified 7.20.0 with spring 3.x.x only -->
+        <spring.boot.version>3.2.1</spring.boot.version>
+        <db.h2.version>2.2.224</db.h2.version>
+        <okta.sdk.version>3.0.6</okta.sdk.version>
+        <camunda.version>7.20.0</camunda.version>
         <version.graal.js>21.1.0</version.graal.js>
-        <version.postgresql>42.3.3</version.postgresql>
+        <version.postgresql>42.3.8</version.postgresql>
     </properties>
 
     <dependencyManagement>
