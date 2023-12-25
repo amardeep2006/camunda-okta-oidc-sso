@@ -26,4 +26,4 @@ okta:
 # The value of this flag activates single logout (clears okta session as well.)
 sso:
   enable:
-    singlelogout: true
+    singlelogout: false
