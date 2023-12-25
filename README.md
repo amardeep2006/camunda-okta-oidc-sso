@@ -5,7 +5,7 @@ I have implemented Single logout as well in this. If you don't need then
 modify the WebAppSecurityConfig .
 
 Prerequisites
-* Java 17 (Shall work on Java 11 onwards, I have not tested though)
+* Java 17
 * Okta Developer Account
 * Git
 
