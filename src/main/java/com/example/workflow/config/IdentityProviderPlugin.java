@@ -96,6 +96,7 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
                                     userEntity.setId(oidcUser.getEmail());
                                     userEntity.setFirstName(oidcUser.getGivenName());
                                     userEntity.setLastName(oidcUser.getFamilyName());
+                                    userEntity.setEmail(oidcUser.getEmail());
                                     return Collections.singletonList(userEntity);
                                 }
                             }
