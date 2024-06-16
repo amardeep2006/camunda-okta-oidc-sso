@@ -41,26 +41,6 @@ public class WebAppAuthenticationProvider extends ContainerBasedAuthenticationPr
         }
 
         String emailID = oidcUser.getEmail();
-        AuthenticationResult authenticationResult = new AuthenticationResult(emailID, true);
-//        Here I am fetching OKTA Groups from Spring Security. If you want to just use DB Groups You can delete the code for setting groups
-        authenticationResult.setGroups(getUserGroups(authentication));
-
-        return authenticationResult;
-    }
-
-    /*
-     * Extract groups from User Authorities in Principal Object
-     */
-    private List<String> getUserGroups(Authentication authentication) {
-
-
-        logger.info("++ WebAppAuthenticationProvider.getUserGroups()....");
-        List<String> groupIds;
-        groupIds = authentication.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
-        logger.debug("++ groupIds = " + groupIds);
-        return groupIds;
+        return new AuthenticationResult(emailID, true);
     }
 }
