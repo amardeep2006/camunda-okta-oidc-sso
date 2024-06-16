@@ -11,15 +11,14 @@ import org.camunda.bpm.engine.impl.interceptor.Session;
 import org.camunda.bpm.engine.impl.interceptor.SessionFactory;
 import org.camunda.bpm.engine.impl.persistence.entity.UserEntity;
 import org.camunda.bpm.engine.spring.SpringProcessEnginePlugin;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,6 +35,7 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
      * https://github.com/camunda/camunda-bpm-platform/issues/3689
      * In this implementation, I am querying groups and users against DB first and then SecurityContextHolder
      * */
+    private final Logger logger = LoggerFactory.getLogger(IdentityProviderPlugin.class);
 
     public void preInit(ProcessEngineConfigurationImpl processEngineConfiguration) {
         processEngineConfiguration.setIdentityProviderSessionFactory(new SessionFactory() {
@@ -47,9 +47,10 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
             @Override
             public Session openSession() {
                 return new DbIdentityServiceProvider() {
-//Here I am fetching Groups from Camunda Database First and then in Spring security context. You can change the logic based on your need.
+                    //Here I am fetching Groups from Camunda Database First and then in Spring security context. You can change the logic based on your need.
                     @Override
                     public List<Group> findGroupByQueryCriteria(DbGroupQueryImpl query) {
+//Method1: Get Groups from DB
                         List<Group> groups = super.findGroupByQueryCriteria(query);
                         if (!groups.isEmpty()) {
                             return groups;
@@ -57,14 +58,16 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
 //                        You can delete this logic if you donot want to use OKTA groups and use groups form DB only
                         String userId = query.getUserId();
                         if (userId != null) {
-                            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                            Authentication authentication = SecurityContextHolder.getContext()
+                                    .getAuthentication();
                             if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
-                                List<String> groupIds = authentication.getAuthorities()
-                                        .stream()
-                                        .map(GrantedAuthority::getAuthority)
-                                        .collect(Collectors.toList());
+// Method 2: If you want to extract groups from authorities then uncomment following line.
+                                List<String> groupIds = getUserGroupsFromAuthorities(authentication);
+// Method 3: Here we are Getting groups from attribute called Groups. This should work on most enterprise setup.
+// You can see exact attribute name for Groups in your org in authentication object in debug mode.
+//                                List<String> groupIds = ((OidcUser) authentication.getPrincipal()).getAttribute("Groups");
 
-                                if (!groupIds.isEmpty()) {
+                                if (groupIds != null && !groupIds.isEmpty()) {
                                     return groupIds.stream()
                                             .map(groupId -> {
                                                 Group group = createNewGroup(groupId);
@@ -79,7 +82,7 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
                         return Collections.emptyList();
                     }
 
-//                    Searching User in Database first and then in Spring security. You can tweak the sequence of lookup based on need .
+                    //                    Searching User in Database first and then in Spring security. You can tweak the sequence of lookup based on need .
 //                    or you can keep the lookup you need.
                     @Override
                     public List<User> findUserByQueryCriteria(DbUserQueryImpl query) {
@@ -90,19 +93,36 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
 
                         String userId = query.getId();
                         if (userId != null) {
-                            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                            Authentication authentication = SecurityContextHolder.getContext()
+                                    .getAuthentication();
                             if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
-                                     UserEntity userEntity = new UserEntity();
-                                    userEntity.setId(oidcUser.getEmail());
-                                    userEntity.setFirstName(oidcUser.getGivenName());
-                                    userEntity.setLastName(oidcUser.getFamilyName());
-                                    userEntity.setEmail(oidcUser.getEmail());
-                                    return Collections.singletonList(userEntity);
-                                }
+                                UserEntity userEntity = new UserEntity();
+                                userEntity.setId(oidcUser.getEmail());
+                                userEntity.setFirstName(oidcUser.getGivenName());
+                                userEntity.setLastName(oidcUser.getFamilyName());
+                                userEntity.setEmail(oidcUser.getEmail());
+                                return Collections.singletonList(userEntity);
                             }
+                        }
 
                         return Collections.emptyList();
                     }
+
+                    /*
+                     * Extract groups from User Authorities in Principal Object
+                     */
+                    private List<String> getUserGroupsFromAuthorities(Authentication authentication) {
+                        logger.info("++ WebAppAuthenticationProvider.getUserGroups()....");
+                        List<String> groupIds;
+                        groupIds = authentication.getAuthorities()
+                                .stream()
+                                .map(GrantedAuthority::getAuthority)
+                                .map(res -> res.substring(5)) // Strip "ROLE_" . make index changes if needed
+                                .collect(Collectors.toList());
+                        logger.debug("++ groupIds = " + groupIds);
+                        return groupIds;
+                    }
+
                 };
             }
         });
