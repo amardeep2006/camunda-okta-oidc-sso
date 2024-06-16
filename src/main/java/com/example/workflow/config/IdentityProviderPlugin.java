@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,40 +47,23 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
             @Override
             public Session openSession() {
                 return new DbIdentityServiceProvider() {
-
+//Here I am fetching Groups from Camunda Database First and then in Spring security context. You can change the logic based on your need.
                     @Override
                     public List<Group> findGroupByQueryCriteria(DbGroupQueryImpl query) {
                         List<Group> groups = super.findGroupByQueryCriteria(query);
                         if (!groups.isEmpty()) {
                             return groups;
+                        }
+//                        You can delete this logic if you donot want to use OKTA groups and use groups form DB only
+                        String userId = query.getUserId();
+                        if (userId != null) {
+                            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                            if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
+                                List<String> groupIds = authentication.getAuthorities()
+                                        .stream()
+                                        .map(GrantedAuthority::getAuthority)
+                                        .collect(Collectors.toList());
 
-                        } else {
-                            /*
-                            * Fetch user details and Groups from SpringSecurityContext
-                            * */
-                            String userId = query.getUserId();
-                            if (userId != null) {
-                                UserDetails userDetails = null;
-
-                                Authentication authentication;
-                                try {
-                                    authentication = SecurityContextHolder.getContext()
-                                            .getAuthentication();
-                                    if (authentication != null) {
-                                        String name = ((OidcUser) authentication.getPrincipal()).getName();
-                                        String emailID = ((OidcUser) authentication.getPrincipal()).getEmail();
-                                    }
-                                } catch (UsernameNotFoundException e) {
-                                    return Collections.emptyList();
-                                }
-                                List<String> groupIds = null;
-                                if (authentication != null) {
-                                    groupIds = authentication.getAuthorities()
-                                            .stream()
-                                            .map(GrantedAuthority::getAuthority)
-//                                        .map(res -> res.substring(5)) // Strip "ROLE_"
-                                            .collect(Collectors.toList());
-                                }
                                 if (!groupIds.isEmpty()) {
                                     return groupIds.stream()
                                             .map(groupId -> {
@@ -88,65 +72,35 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
                                                 return group;
                                             })
                                             .collect(Collectors.toList());
-
-                                } else {
-                                    return Collections.emptyList();
-
                                 }
-                            } else {
-                                return Collections.emptyList();
-
                             }
                         }
+
+                        return Collections.emptyList();
                     }
 
+//                    Searching User in Database first and then in Spring security. You can tweak the sequence of lookup based on need .
+//                    or you can keep the lookup you need.
                     @Override
                     public List<User> findUserByQueryCriteria(DbUserQueryImpl query) {
                         List<User> users = super.findUserByQueryCriteria(query);
                         if (!users.isEmpty()) {
                             return users;
-
-                        } else {
-                            String userId = query.getId();
-                            if (userId != null) {
-                                UserDetails userDetails = null;
-                                Authentication authentication = null;
-                                String name = null;
-                                String emailID = null;
-                                String firstName= null;
-                                String lastName= null;
-                                try {
-//                                    userDetails = userDetailsService.loadUserByUsername(userId);
-                                    authentication = SecurityContextHolder.getContext()
-                                            .getAuthentication();
-                                    if (authentication != null) {
-                                        name = ((OidcUser) authentication.getPrincipal()).getName();
-                                        emailID = ((OidcUser) authentication.getPrincipal()).getEmail();
-                                        firstName = ((OidcUser) authentication.getPrincipal()).getFullName();
-                                        lastName = ((OidcUser) authentication.getPrincipal()).getFamilyName();
-                                    }
-                                } catch (UsernameNotFoundException e) {
-                                    return Collections.emptyList();
-                                }
-
-                                if (emailID != null) {
-                                    UserEntity userEntity = new UserEntity();
-                                    userEntity.setId(emailID);
-                                    userEntity.setFirstName(firstName);
-                                    userEntity.setLastName(lastName);
-
-                                    return Collections.singletonList(userEntity);
-
-                                } else {
-                                    return Collections.emptyList();
-
-                                }
-
-                            } else {
-                                return Collections.emptyList();
-
-                            }
                         }
+
+                        String userId = query.getId();
+                        if (userId != null) {
+                            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+                            if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
+                                     UserEntity userEntity = new UserEntity();
+                                    userEntity.setId(oidcUser.getEmail());
+                                    userEntity.setFirstName(oidcUser.getGivenName());
+                                    userEntity.setLastName(oidcUser.getFamilyName());
+                                    return Collections.singletonList(userEntity);
+                                }
+                            }
+
+                        return Collections.emptyList();
                     }
                 };
             }
