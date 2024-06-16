@@ -31,8 +31,7 @@ public class WebAppSecurityConfig {
     @Autowired
     ClientRegistrationRepository clientRegistrationRepository;
     OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler() {
-        OidcClientInitiatedLogoutSuccessHandler successHandler = new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
-        return successHandler;
+        return new OidcClientInitiatedLogoutSuccessHandler(clientRegistrationRepository);
     }
 
     @Value("${sso.enable.singlelogout:false}")

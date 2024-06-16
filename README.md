@@ -48,7 +48,7 @@ Go to Security : Authorization Server : default
 ![img_5.png](img/img_5.png)
  
 Go To Claims Tab and create 2 claims with name "**camunda-groups**"  one for ID and one for access
-
+It may not be required for enterprise setup.
 ![img_7.png](img/img_7.png)
 
 ![img_8.png](img/img_8.png)
@@ -80,6 +80,6 @@ Now you will be taken to okta for login.
 
 If you face some trouble, raise and issue on this repo.
 
-# Future plans - January 2024 
+# Future plans 
 
 I am working on securing REST API via client credentials flow and JWT based on okta . Will update soon.
