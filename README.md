@@ -18,7 +18,7 @@ Prerequisites
 Create one User under Directory menu. 
 2. Login to Okta and register your app by clicking on Applications : Create App Integration
 ![img.png](img/img.png)
-3Select OIDC and Application type as Web
+3. Select OIDC and Application type as Web
 ![img_2.png](img/img_2.png)
 4. Provide App Details
 
@@ -66,7 +66,7 @@ spring:
             jwk-set-uri: https://CHANGEIT.okta.com/oauth2/default/v1/keys
 ```
 
-9. Run the Project with following commands
+6. Run the Project with following commands
 
 `./mvnw clean package`
 
@@ -78,7 +78,7 @@ Now you will be taken to okta for login.
 
 If you face some trouble, raise and issue on this repo.
 
-10. To disable sso , delete all the okta configurations and configs listed below. 
+7. To disable sso , delete all the okta configurations and configs listed below. 
 
 ```yaml
 oauth2:
