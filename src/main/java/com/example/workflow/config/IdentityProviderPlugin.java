@@ -76,20 +76,20 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
                         return Collections.emptyList();
                     }
 
-                    private List<String> extractGroupsFromUserAttribute(Authentication authentication) {
-                        return ((OidcUser) authentication.getPrincipal()).getAttribute(groupNameAttribute);
-                    }
-
-                    private List<Group> convertToGroupList(List<String> groupIds) {
-                        return groupIds.stream()
-                                .map(groupId -> {
-                                    Group group = new GroupEntity();
-                                    group.setId(groupId);
-                                    group.setName(groupId);
-                                    return group;
-                                })
-                                .collect(Collectors.toList());
-                    }
+//                    private List<String> extractGroupsFromUserAttribute(Authentication authentication) {
+//                        return ((OidcUser) authentication.getPrincipal()).getAttribute(groupNameAttribute);
+//                    }
+//
+//                    private List<Group> convertToGroupList(List<String> groupIds) {
+//                        return groupIds.stream()
+//                                .map(groupId -> {
+//                                    Group group = new GroupEntity();
+//                                    group.setId(groupId);
+//                                    group.setName(groupId);
+//                                    return group;
+//                                })
+//                                .collect(Collectors.toList());
+//                    }
 
                 };
             }
