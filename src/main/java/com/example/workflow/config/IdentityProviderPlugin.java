@@ -48,23 +48,9 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
                         if (!groups.isEmpty()) {
                             return groups;
                         }
-//if you want to Use OIDC groups
-                        String userId = query.getUserId();
-                        if (userId != null) {
-                            Authentication authentication = SecurityContextHolder.getContext()
-                                    .getAuthentication();
-                            if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
-                                List<String> groupIds = extractGroupsFromUserAttribute(authentication);
-                                if (groupIds != null && !groupIds.isEmpty()) {
-                                    return convertToGroupList(groupIds);
-                                }
-                            }
-                        }
-
                         return Collections.emptyList();
                     }
-
-                    //                    Searching User in Database first and then in Spring security context. You can tweak the sequence of lookup based on need .
+//                    Searching User in Database first and then in Spring security context. You can tweak the sequence of lookup based on need .
 //                    or you can keep the lookup you need.
                     @Override
                     public List<User> findUserByQueryCriteria(DbUserQueryImpl query) {
