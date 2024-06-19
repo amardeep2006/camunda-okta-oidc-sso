@@ -15,7 +15,6 @@
         <!--Camunda certified 7.21.0 with spring 3.x.x only -->
         <spring.boot.version>3.3.0</spring.boot.version>
         <db.h2.version>2.2.224</db.h2.version>
-        <okta.sdk.version>3.0.6</okta.sdk.version>
         <camunda.version>7.21.0</camunda.version>
         <version.graal.js>24.0.1</version.graal.js>
         <version.postgresql>42.7.3</version.postgresql>
@@ -42,13 +41,6 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- We need okta sdk, default Spring security oauth2 does not fetch groups from okta     -->
-        <!--    https://developer.okta.com/blog/2019/06/20/spring-preauthorize-->
-        <dependency>
-            <groupId>com.okta.spring</groupId>
-            <artifactId>okta-spring-boot-starter</artifactId>
-            <version>${okta.sdk.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.camunda.bpm.springboot</groupId>

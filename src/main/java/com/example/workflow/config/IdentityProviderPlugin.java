@@ -9,13 +9,14 @@ import org.camunda.bpm.engine.impl.identity.db.DbIdentityServiceProvider;
 import org.camunda.bpm.engine.impl.identity.db.DbUserQueryImpl;
 import org.camunda.bpm.engine.impl.interceptor.Session;
 import org.camunda.bpm.engine.impl.interceptor.SessionFactory;
+import org.camunda.bpm.engine.impl.persistence.entity.GroupEntity;
 import org.camunda.bpm.engine.impl.persistence.entity.UserEntity;
 import org.camunda.bpm.engine.spring.SpringProcessEnginePlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 
@@ -25,17 +26,10 @@ import java.util.stream.Collectors;
 
 @Configuration
 public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
-    /*
-     * IdentityProviderPlugin is required since Camunda 7.19. Camunda implemented a security feature to cache the auth info
-     * for finite time only. Refer below links for more info
-     * https://docs.camunda.org/security/notices/#notice-85
-     * https://docs.camunda.org/manual/7.19/user-guide/security/#authentication-cache
-     * https://github.com/camunda-consulting/camunda-7-code-examples/tree/main/snippets/springboot-security-sso
-     * https://github.com/camunda/camunda-bpm-platform/issues/3475
-     * https://github.com/camunda/camunda-bpm-platform/issues/3689
-     * In this implementation, I am querying groups and users against DB first and then SecurityContextHolder
-     * */
+
     private final Logger logger = LoggerFactory.getLogger(IdentityProviderPlugin.class);
+    @Value("${oauth2.groupNameAttribute:groups}")
+    private String groupNameAttribute;
 
     public void preInit(ProcessEngineConfigurationImpl processEngineConfiguration) {
         processEngineConfiguration.setIdentityProviderSessionFactory(new SessionFactory() {
@@ -50,31 +44,19 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
                     //Here I am fetching Groups from Camunda Database First and then in Spring security context. You can change the logic based on your need.
                     @Override
                     public List<Group> findGroupByQueryCriteria(DbGroupQueryImpl query) {
-//Method1: Get Groups from DB
                         List<Group> groups = super.findGroupByQueryCriteria(query);
                         if (!groups.isEmpty()) {
                             return groups;
                         }
-//                        You can delete this logic if you donot want to use OKTA groups and use groups form DB only
+//if you want to Use OIDC groups
                         String userId = query.getUserId();
                         if (userId != null) {
                             Authentication authentication = SecurityContextHolder.getContext()
                                     .getAuthentication();
                             if (authentication != null && authentication.getPrincipal() instanceof OidcUser oidcUser) {
-// Method 2: If you want to extract groups from authorities then uncomment following line.
-                                List<String> groupIds = getUserGroupsFromAuthorities(authentication);
-// Method 3: Here we are Getting groups from attribute called Groups. This should work on most enterprise setup.
-// You can see exact attribute name for Groups in your org in authentication object in debug mode.
-//                                List<String> groupIds = ((OidcUser) authentication.getPrincipal()).getAttribute("Groups");
-
+                                List<String> groupIds = extractGroupsFromUserAttribute(authentication);
                                 if (groupIds != null && !groupIds.isEmpty()) {
-                                    return groupIds.stream()
-                                            .map(groupId -> {
-                                                Group group = createNewGroup(groupId);
-                                                group.setName(groupId);
-                                                return group;
-                                            })
-                                            .collect(Collectors.toList());
+                                    return convertToGroupList(groupIds);
                                 }
                             }
                         }
@@ -82,7 +64,7 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
                         return Collections.emptyList();
                     }
 
-                    //                    Searching User in Database first and then in Spring security. You can tweak the sequence of lookup based on need .
+                    //                    Searching User in Database first and then in Spring security context. You can tweak the sequence of lookup based on need .
 //                    or you can keep the lookup you need.
                     @Override
                     public List<User> findUserByQueryCriteria(DbUserQueryImpl query) {
@@ -108,19 +90,19 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
                         return Collections.emptyList();
                     }
 
-                    /*
-                     * Extract groups from User Authorities in Principal Object
-                     */
-                    private List<String> getUserGroupsFromAuthorities(Authentication authentication) {
-                        logger.info("++ WebAppAuthenticationProvider.getUserGroups()....");
-                        List<String> groupIds;
-                        groupIds = authentication.getAuthorities()
-                                .stream()
-                                .map(GrantedAuthority::getAuthority)
-                                .map(res -> res.substring(5)) // Strip "ROLE_" . make index changes if needed
+                    private List<String> extractGroupsFromUserAttribute(Authentication authentication) {
+                        return ((OidcUser) authentication.getPrincipal()).getAttribute(groupNameAttribute);
+                    }
+
+                    private List<Group> convertToGroupList(List<String> groupIds) {
+                        return groupIds.stream()
+                                .map(groupId -> {
+                                    Group group = new GroupEntity();
+                                    group.setId(groupId);
+                                    group.setName(groupId);
+                                    return group;
+                                })
                                 .collect(Collectors.toList());
-                        logger.debug("++ groupIds = " + groupIds);
-                        return groupIds;
                     }
 
                 };

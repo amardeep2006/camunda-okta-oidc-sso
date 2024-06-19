@@ -13,17 +13,27 @@ camunda.bpm:
   generic-properties:
     properties:
       generalResourceWhitelistPattern: ".+"
-okta:
-  oauth2:
-    #  Make sure to change the below as per your okta tenant
-    issuer: https://<your-dev-tenant>.okta.com/oauth2/default
-    client-id: <your okta client id here>
-    client-secret: <your okta client secret here>
-#    scopes: openid,profile,email
-# Make sure you have created camunda-groups claim on okta authorization server , typically not needed in enterprise setup.
-#    groupsClaim: camunda-groups
-    #  Make sure to change the below as per your okta tenant
-# The value of this flag activates single logout (clears okta session as well.)
-sso:
-  enable:
-    singlelogout: false
+# Spring security configurations for okta authorization server
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          okta:
+            client-id: <your client-id here>
+            client-secret: <your client-secret here>
+            scope: openid,profile,email,groups
+        provider:
+          okta:
+            authorization-uri: https://yourtenent.okta.com/oauth2/default/v1/authorize
+            token-uri: https://yourtenent.okta.com/oauth2/default/v1/token
+            user-info-uri: https://yourtenent.okta.com/oauth2/default/v1/userinfo
+            jwk-set-uri: https://yourtenent.okta.com/oauth2/default/v1/keys
+
+# Flags for enabling/ disabling single logout
+oauth2:
+  enabled: false
+#  groupNameAttribute matters a lot, it should be same as scope name and claim name. Defaults to groups
+  groupNameAttribute: groups
+  singlelogout:
+    enabled: false
