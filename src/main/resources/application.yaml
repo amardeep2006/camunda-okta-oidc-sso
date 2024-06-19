@@ -9,7 +9,8 @@ camunda.bpm:
     firstName: Amar Deep
     lastName: Singh
     email: amar.deep.singh@xyz.com
-
+  filter:
+    create: All Tasks
   generic-properties:
     properties:
       generalResourceWhitelistPattern: ".+"
@@ -20,19 +21,19 @@ spring:
       client:
         registration:
           okta:
-            client-id: <your client-id here>
-            client-secret: <your client-secret here>
-            scope: openid,profile,email,groups
+            client-id: change it
+            client-secret: change it
+            scope: openid,profile,email
         provider:
           okta:
-            authorization-uri: https://yourtenent.okta.com/oauth2/default/v1/authorize
-            token-uri: https://yourtenent.okta.com/oauth2/default/v1/token
-            user-info-uri: https://yourtenent.okta.com/oauth2/default/v1/userinfo
-            jwk-set-uri: https://yourtenent.okta.com/oauth2/default/v1/keys
+            authorization-uri: https://CHANGEIT.okta.com/oauth2/default/v1/authorize
+            token-uri: https://CHANGEIT.okta.com/oauth2/default/v1/token
+            user-info-uri: https://CHANGEIT.okta.com/oauth2/default/v1/userinfo
+            jwk-set-uri: https://CHANGEIT.okta.com/oauth2/default/v1/keys
 
 # Flags for enabling/ disabling single logout
 oauth2:
-  enabled: false
+  enabled: true
 #  groupNameAttribute matters a lot, it should be same as scope name and claim name. Defaults to groups
   groupNameAttribute: groups
   singlelogout:

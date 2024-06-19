@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -25,7 +26,7 @@ import java.util.Collections;
 
 import static org.springframework.security.web.util.matcher.AntPathRequestMatcher.antMatcher;
 
-
+@ConditionalOnProperty(prefix = "oauth2", name = "enabled", havingValue = "true", matchIfMissing = false)
 @EnableWebSecurity
 @Configuration
 public class WebAppSecurityConfig {
@@ -70,7 +71,7 @@ public class WebAppSecurityConfig {
         return http.build();
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @ConditionalOnProperty(prefix = "oauth2", name = "enabled", havingValue = "true", matchIfMissing = false)
     @Bean
     public FilterRegistrationBean containerBasedAuthenticationFilter() {
 
