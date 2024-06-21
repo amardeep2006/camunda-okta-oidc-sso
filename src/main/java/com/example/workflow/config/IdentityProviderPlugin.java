@@ -41,15 +41,6 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
             @Override
             public Session openSession() {
                 return new DbIdentityServiceProvider() {
-                    //Here I am fetching Groups from Camunda Database First and then in Spring security context. You can change the logic based on your need.
-                    @Override
-                    public List<Group> findGroupByQueryCriteria(DbGroupQueryImpl query) {
-                        List<Group> groups = super.findGroupByQueryCriteria(query);
-                        if (!groups.isEmpty()) {
-                            return groups;
-                        }
-                        return Collections.emptyList();
-                    }
 //                    Searching User in Database first and then in Spring security context. You can tweak the sequence of lookup based on need .
 //                    or you can keep the lookup you need.
                     @Override
@@ -75,21 +66,6 @@ public class IdentityProviderPlugin extends SpringProcessEnginePlugin {
 
                         return Collections.emptyList();
                     }
-
-//                    private List<String> extractGroupsFromUserAttribute(Authentication authentication) {
-//                        return ((OidcUser) authentication.getPrincipal()).getAttribute(groupNameAttribute);
-//                    }
-//
-//                    private List<Group> convertToGroupList(List<String> groupIds) {
-//                        return groupIds.stream()
-//                                .map(groupId -> {
-//                                    Group group = new GroupEntity();
-//                                    group.setId(groupId);
-//                                    group.setName(groupId);
-//                                    return group;
-//                                })
-//                                .collect(Collectors.toList());
-//                    }
 
                 };
             }
