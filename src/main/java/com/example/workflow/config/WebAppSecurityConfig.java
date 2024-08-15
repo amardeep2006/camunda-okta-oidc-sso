@@ -53,7 +53,8 @@ public class WebAppSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(csrf -> csrf.ignoringRequestMatchers(antMatcher(webappPath + "/api/**")))
+        http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(antMatcher("/swaggerui/**"))
                         .permitAll()
